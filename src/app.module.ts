@@ -1,24 +1,34 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Authentication } from './authentication.entity';
-import { AuthenticationModule } from './authentication/authentication.module';
+import { Module } from '@nestjs/common'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { Authentication } from './authentication.entity'
+import { AuthenticationModule } from './authentication/authentication.module'
+import { ConfigModule } from '@nestjs/config'
+import { ConfigService } from '@nestjs/config/dist'
+
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      username: 'postgres',
-      password: '22995621',
-      port: 5432,
-      database: 'elearning',
-      entities:[Authentication],
-      synchronize: true, // Will be changed to false in production
+    ConfigModule.forRoot({
+      envFilePath: `.${process.env.NODE_ENV}.env`
     }),
-    AuthenticationModule,
+    TypeOrmModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('DB_HOST'),
+        username: configService.get('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        port: configService.get<number>('DB_PORT'),
+        database: configService.get('DB_NAME'),
+        entities: [Authentication],
+        synchronize: configService.get('DB_SYNCHRONIZE') // Will be changed to false in production
+      }),
+      inject: [ConfigService],
+      imports: [ConfigModule]
+    }),
+    AuthenticationModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
-export class AppModule { }
+export class AppModule {}

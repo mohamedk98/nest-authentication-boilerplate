@@ -1,26 +1,16 @@
-import { IsString, IsEmail, Length, IsEnum } from "class-validator";
-
-
-export enum USERTYPE {
-    ADMIN,
-    STUDENT,
-    LECTURER,
-    CUSTOMERSUPPORT,
-}
-
+import { IsString, IsEmail, Length, IsEnum } from 'class-validator'
+import { UserTypes } from 'src/utils/user-types'
 
 export class CreateUserDto {
+  @IsEmail()
+  @IsString()
+  email: string
 
-    @IsEmail()
-    @IsString()
-    email: string
+  @Length(6, 50, { message: 'Password Must not be less than 6 characters' })
+  @IsString()
+  password: string
 
-    @Length(6,50, { message: "Password Must not be less than 6 characters" })
-    @IsString()
-    password: string
-
-    @IsEnum(USERTYPE)
-    @IsString()
-    userType: USERTYPE
-
+  @IsEnum(UserTypes)
+  @IsString()
+  userType: UserTypes
 }

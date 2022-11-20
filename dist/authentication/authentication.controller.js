@@ -15,16 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthenticationController = void 0;
 const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
-const jwt_1 = require("@nestjs/jwt");
 const create_user_dto_1 = require("../dtos/create-user.dto");
 const user_dto_1 = require("../dtos/user.dto");
 const serialize_interceptor_1 = require("../interceptors/serialize.interceptor");
 const authentication_service_1 = require("./authentication.service");
 const admin_guard_1 = require("./authorization-guards/admin.guard");
 let AuthenticationController = class AuthenticationController {
-    constructor(authenticationService, jwtService) {
+    constructor(authenticationService) {
         this.authenticationService = authenticationService;
-        this.jwtService = jwtService;
     }
     register(body) {
         return this.authenticationService.create(body);
@@ -33,7 +31,7 @@ let AuthenticationController = class AuthenticationController {
         return this.authenticationService.login(body);
     }
     access(req) {
-        return "hello";
+        return 'hello admin';
     }
 };
 __decorate([
@@ -52,7 +50,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AuthenticationController.prototype, "login", null);
 __decorate([
-    (0, common_1.UseGuards)(new admin_guard_1.AdminGuard("ADMIN")),
+    (0, admin_guard_1.UseAuthorizationGuard)('ADMIN'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.Get)('/canAccess'),
     __param(0, (0, common_1.Req)()),
@@ -62,7 +60,7 @@ __decorate([
 ], AuthenticationController.prototype, "access", null);
 AuthenticationController = __decorate([
     (0, common_1.Controller)('auth'),
-    __metadata("design:paramtypes", [authentication_service_1.AuthenticationService, jwt_1.JwtService])
+    __metadata("design:paramtypes", [authentication_service_1.AuthenticationService])
 ], AuthenticationController);
 exports.AuthenticationController = AuthenticationController;
 //# sourceMappingURL=authentication.controller.js.map

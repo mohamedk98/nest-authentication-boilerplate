@@ -9,9 +9,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AdminGuard = void 0;
+exports.AuthorizationGuard = exports.UseAuthorizationGuard = void 0;
 const common_1 = require("@nestjs/common");
-let AdminGuard = class AdminGuard {
+const decorators_1 = require("@nestjs/common/decorators");
+function UseAuthorizationGuard(role) {
+    return (0, decorators_1.UseGuards)(new AuthorizationGuard(role));
+}
+exports.UseAuthorizationGuard = UseAuthorizationGuard;
+let AuthorizationGuard = class AuthorizationGuard {
     constructor(role) {
         this.role = role;
     }
@@ -20,9 +25,9 @@ let AdminGuard = class AdminGuard {
         return request.user.userType === this.role ? true : false;
     }
 };
-AdminGuard = __decorate([
+AuthorizationGuard = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [String])
-], AdminGuard);
-exports.AdminGuard = AdminGuard;
+], AuthorizationGuard);
+exports.AuthorizationGuard = AuthorizationGuard;
 //# sourceMappingURL=admin.guard.js.map

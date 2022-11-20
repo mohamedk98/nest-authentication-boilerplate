@@ -13,25 +13,34 @@ const app_service_1 = require("./app.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const authentication_entity_1 = require("./authentication.entity");
 const authentication_module_1 = require("./authentication/authentication.module");
+const config_1 = require("@nestjs/config");
+const dist_1 = require("@nestjs/config/dist");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forRoot({
-                type: 'postgres',
-                host: 'localhost',
-                username: 'postgres',
-                password: '22995621',
-                port: 5432,
-                database: 'elearning',
-                entities: [authentication_entity_1.Authentication],
-                synchronize: true,
+            config_1.ConfigModule.forRoot({
+                envFilePath: `.${process.env.NODE_ENV}.env`
             }),
-            authentication_module_1.AuthenticationModule,
+            typeorm_1.TypeOrmModule.forRootAsync({
+                useFactory: async (configService) => ({
+                    type: 'postgres',
+                    host: configService.get('DB_HOST'),
+                    username: configService.get('DB_USERNAME'),
+                    password: configService.get('DB_PASSWORD'),
+                    port: configService.get('DB_PORT'),
+                    database: configService.get('DB_NAME'),
+                    entities: [authentication_entity_1.Authentication],
+                    synchronize: configService.get('DB_SYNCHRONIZE')
+                }),
+                inject: [dist_1.ConfigService],
+                imports: [config_1.ConfigModule]
+            }),
+            authentication_module_1.AuthenticationModule
         ],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        providers: [app_service_1.AppService]
     })
 ], AppModule);
 exports.AppModule = AppModule;

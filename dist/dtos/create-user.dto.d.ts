@@ -1,11 +1,6 @@
-export declare enum USERTYPE {
-    ADMIN = 0,
-    STUDENT = 1,
-    LECTURER = 2,
-    CUSTOMERSUPPORT = 3
-}
+import { UserTypes } from 'src/utils/user-types';
 export declare class CreateUserDto {
     email: string;
     password: string;
-    userType: USERTYPE;
+    userType: UserTypes;
 }
